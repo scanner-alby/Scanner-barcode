@@ -3,66 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scanner Codici a Barre</title>
-    <script src="https://unpkg.com/quagga"></script>
-    <style>
-        body { text-align: center; font-family: Arial, sans-serif; }
-        #scanner-container { width: 100%; max-width: 500px; margin: auto; position: relative; }
-        video { width: 100%; border: 2px solid black; }
-        #status { margin-top: 10px; font-size: 18px; color: green; }
-    </style>
+    <title>Test della Fotocamera</title>
 </head>
 <body>
-
-    <h2>Scannerizza il codice a barre</h2>
-    <div id="scanner-container">
-        <video id="video"></video>
-    </div>
-    <p id="status">Inquadra un codice a barre...</p>
+    <h2>Test della Fotocamera</h2>
+    <video id="video" width="400" height="300" autoplay></video>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const video = document.getElementById("video");
-            const status = document.getElementById("status");
+        const video = document.getElementById('video');
 
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: video,
-                    constraints: {
-                        facingMode: "environment" // Usa la fotocamera posteriore
-                    }
-                },
-                decoder: {
-                    readers: [
-                        "ean_reader",        // Supporta EAN-13 (Europa)
-                        "upc_reader",        // Supporta UPC-A (USA e Canada)
-                        "code_128_reader",   // Supporta Code 128 (etichette)
-                        "qr_reader"          // Supporta QR Code
-                    ]
-                }
-            }, function (err) {
-                if (err) {
-                    console.error(err);
-                    status.innerText = "Errore nell'attivazione della fotocamera";
-                    return;
-                }
-                Quagga.start();
+        // Controllo accesso alla fotocamera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error("Errore nell'accesso alla fotocamera: ", err);
             });
-
-            Quagga.onDetected(function (data) {
-                let codice = data.codeResult.code;
-                let tipo = data.codeResult.format; // Tipo di codice letto
-
-                status.innerText = `Codice rilevato: ${codice} (${tipo})`;
-                
-                // Reindirizza a una pagina con il codice scansionato
-                window.location.href = `https://www.ticasa.ch//prodotto/${codice}`;
-            });
-        });
     </script>
-
 </body>
 </html>
-
