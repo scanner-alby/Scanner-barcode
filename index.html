@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Scanner Codici a Barre</title>
+</head>
+<body>
+
+  <h1>Scanner Codici a Barre</h1>
+
+  <video id="video" width="300" height="200" autoplay></video>
+
+  <script>
+    const video = document.getElementById('video');
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(function(stream) {
+        video.srcObject = stream;
+        video.play();
+      })
+      .catch(function(err) {
+        console.error('Errore nell'accesso alla fotocamera:', err);
+      });
+
+    // Libreria per la lettura dei codici a barre (es. QuaggaJS)
+    Quagga.init({
+      inputStream: {
+        type: "VideoStream",
+        constraints: {
+          width: 640,
+          height: 480,
+          facingMode: "environment" // per usare la fotocamera posteriore
+        }
+      },
+      decoder: {
+        readers: ["ean_reader"] // o altri formati di codici a barre
+      }
+    }, function(err) {
+      if (err) {
+        console.error("Errore nell'inizializzazione di Quagga:", err);
+        return;
+      }
+      Quagga.start();
+    });
+
+    Quagga.onDetected(function(data) {
+      const codice = data.codeResult.code;
+      console.log("Codice a barre rilevato:", codice);
+
+      // Invia il codice a una pagina web (es. tramite fetch API)
+      fetch('/pagina_web', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'codice=' + codice
+      })
+      .then(response => {
+        console.log('Codice inviato con successo:', response);
+      })
+      .catch(error => {
+        console.error('Errore nell'invio del codice:', error);
+      });
+    });
+  </script>
+
+</body>
+</html>
