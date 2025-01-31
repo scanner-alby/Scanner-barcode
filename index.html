@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner Codici a Barre</title>
+    <script src="https://unpkg.com/quagga"></script>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; }
+        #scanner-container { width: 100%; max-width: 500px; margin: auto; position: relative; }
+        video { width: 100%; border: 2px solid black; }
+        #status { margin-top: 10px; font-size: 18px; color: green; }
+    </style>
+</head>
+<body>
+
+    <h2>Scannerizza il codice a barre</h2>
+    <div id="scanner-container">
+        <video id="video"></video>
+    </div>
+    <p id="status">Inquadra un codice a barre...</p>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const video = document.getElementById("video");
+            const status = document.getElementById("status");
+
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: video,
+                    constraints: {
+                        facingMode: "environment" // Usa la fotocamera posteriore
+                    }
+                },
+                decoder: {
+                    readers: ["ean_reader"] // Supporta il formato EAN-13
+                }
+            }, function (err) {
+                if (err) {
+                    console.error(err);
+                    status.innerText = "Errore nell'attivazione della fotocamera";
+                    return;
+                }
+                Quagga.start();
+            });
+
+            Quagga.onDetected(function (data) {
+                let codice = data.codeResult.code;
+                status.innerText = "Codice rilevato: " + codice;
+                
+                // Reindirizza a una pagina con il codice scansionato
+                window.location.href = "https://www.tuosito.com/prodotto/8030582000787;
+            });
+        });
+    </script>
+
+</body>
+</html>
+Aggiunto file scanner
