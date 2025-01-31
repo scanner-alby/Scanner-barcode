@@ -35,7 +35,12 @@
                     }
                 },
                 decoder: {
-                    readers: ["ean_reader"] // Supporta il formato EAN-13
+                    readers: [
+                        "ean_reader",        // Supporta EAN-13 (Europa)
+                        "upc_reader",        // Supporta UPC-A (USA e Canada)
+                        "code_128_reader",   // Supporta Code 128 (etichette)
+                        "qr_reader"          // Supporta QR Code
+                    ]
                 }
             }, function (err) {
                 if (err) {
@@ -48,14 +53,18 @@
 
             Quagga.onDetected(function (data) {
                 let codice = data.codeResult.code;
-                status.innerText = "Codice rilevato: " + codice;
+                let tipo = data.codeResult.format; // Tipo di codice letto
+
+                status.innerText = `Codice rilevato: ${codice} (${tipo})`;
                 
                 // Reindirizza a una pagina con il codice scansionato
-                window.location.href = "https://www.tuosito.com/prodotto/8030582000787;
+                window.location.href = `https://www.ticasa.ch/prodotto/${8030582000787}`;
             });
         });
     </script>
 
 </body>
 </html>
-Aggiunto file scanner
+
+
+
